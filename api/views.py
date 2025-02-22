@@ -127,6 +127,10 @@ client = vimeo.VimeoClient(
     secret=settings.VIMEO_CLIENT_SECRET
 )
 
+
+
+
+
 @csrf_exempt
 def upload_video(request):
     if request.method != "POST":
@@ -158,11 +162,6 @@ def upload_video(request):
         return JsonResponse({"error": f"An unexpected error occurred: {str(e)}"}, status=500)
 
 
-client = vimeo.VimeoClient(
-    token=settings.VIMEO_ACCESS_TOKEN,
-    key=settings.VIMEO_CLIENT_ID,
-    secret=settings.VIMEO_CLIENT_SECRET
-)
 
 @csrf_exempt
 def edit_video(request):

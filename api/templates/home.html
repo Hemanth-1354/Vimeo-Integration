@@ -43,10 +43,12 @@
 
     <h2>Upload Video</h2>
     <form id="upload-form">
-        <input type="file" id="video-url" placeholder="Enter Video URL">
+        <input type="text" id="video-url" placeholder="Enter Video URL">
         <button type="submit">Upload</button>
     </form>
     <div id="upload-status"></div>
+
+
 
     <h2>Edit Video Details</h2>
     <form id="edit-video-details-form">
@@ -56,6 +58,8 @@
         <button type="submit">Update</button>
     </form>
     <div id="edit-video-details-status"></div>
+
+
 
     <script>
         function displayResult(elementId, data) {
@@ -89,6 +93,8 @@
             document.getElementById('embed-result').innerHTML = data.embed_code || '<p>Error embedding video.</p>';
         });
 
+
+
         // Get Channel Details
         document.getElementById('channel-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -98,18 +104,33 @@
             displayResult('channel-details', data);
         });
 
+
+
+
+
+
+
         // Upload Video with URL
         document.getElementById('upload-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const videoUrl = document.getElementById('video-url').value;
-            const response = await fetch('/upload/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ video_url: videoUrl })
-            });
-            const data = await response.json();
-            displayResult('upload-status', data);
+            const videoPath = document.getElementById('video-url').value; // Expecting a local path
+            try {
+                const response = await fetch('/upload/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ video_path: videoPath }) // Changed key to `video_path`
+                });
+                const data = await response.json();
+                displayResult('upload-status', data);
+            } catch (error) {
+                console.error("Upload failed:", error);
+                displayResult('upload-status', { error: "Failed to upload video." });
+            }
         });
+        
+
+
+
 
         // Edit Video Details
         document.getElementById('edit-video-details-form').addEventListener('submit', async (e) => {
