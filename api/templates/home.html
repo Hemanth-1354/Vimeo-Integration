@@ -4,152 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vimeo API Integration</title>
-    <style>
-        body { font-family: sans-serif; }
-        form { margin-bottom: 20px; }
-        textarea { width: 100%; min-height: 100px; }
-    </style>
+    <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-    <h1>Vimeo API Integration</h1>
+    <div class="container">
+        <h1>Vimeo API Integration</h1>
 
-    <h2>Search Videos</h2>
-    <form id="search-form">
-        <input type="text" id="query" placeholder="Enter search term">
-        <button type="submit">Search</button>
-    </form>
-    <div id="search-results"></div>
+        <h2>Search Videos</h2>
+        <form id="search-form">
+            <input type="text" id="query" placeholder="Enter search term">
+            <button type="submit">Search</button>
+        </form>
+        <div id="search-results"></div>
 
-    <h2>Get Video Details</h2>
-    <form id="video-details-form">
-        <input type="text" id="video-id" placeholder="Enter Video ID">
-        <button type="submit">Get Details</button>
-    </form>
-    <div id="video-details"></div>
+        <h2>Get Video Details</h2>
+        <form id="video-details-form">
+            <input type="text" id="video-id" placeholder="Enter Video ID">
+            <button type="submit">Get Details</button>
+        </form>
+        <div id="video-details"></div>
 
-    <h2>Embed Video</h2>
-    <form id="embed-form">
-        <input type="text" id="embed-video-id" placeholder="Enter Video ID">
-        <button type="submit">Embed</button>
-    </form>
-    <div id="embed-result"></div>
+        <h2>Embed Video</h2>
+        <form id="embed-form">
+            <input type="text" id="embed-video-id" placeholder="Enter Video ID">
+            <button type="submit">Embed</button>
+        </form>
+        <div id="embed-result"></div>
 
-    <h2>Get Channel Details</h2>
-    <form id="channel-form">
-        <input type="text" id="channel-id" placeholder="Enter Channel ID">
-        <button type="submit">Get Details</button>
-    </form>
-    <div id="channel-details"></div>
+        <h2>Get Channel Details</h2>
+        <form id="channel-form">
+            <input type="text" id="channel-id" placeholder="Enter Channel ID">
+            <button type="submit">Get Details</button>
+        </form>
+        <div id="channel-details"></div>
 
-    <h2>Upload Video</h2>
-    <form id="upload-form">
-        <input type="text" id="video-url" placeholder="Enter Video URL">
-        <button type="submit">Upload</button>
-    </form>
-    <div id="upload-status"></div>
+        <h2>Upload Video</h2>
+        <form id="upload-form">
+            <input type="text" id="video-url" placeholder="Enter Video URL">
+            <button type="submit">Upload</button>
+        </form>
+        <div id="upload-status"></div>
 
+        <h2>Edit Video Details</h2>
+        <form id="edit-video-details-form">
+            <input type="text" id="edit-video-id" placeholder="Enter Video ID">
+            <input type="text" id="title" placeholder="Enter title">
+            <input type="text" id="description" placeholder="Enter Description">
+            <button type="submit">Update</button>
+        </form>
+        <div id="edit-video-details-status"></div>
+    </div>
 
-
-    <h2>Edit Video Details</h2>
-    <form id="edit-video-details-form">
-        <input type="text" id="edit-video-id" placeholder="Enter Video ID">
-        <input type="text" id="title" placeholder="Enter title">
-        <input type="text" id="description" placeholder="Enter Description">
-        <button type="submit">Update</button>
-    </form>
-    <div id="edit-video-details-status"></div>
-
-
-
-    <script>
-        function displayResult(elementId, data) {
-            document.getElementById(elementId).innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-        }
-
-        // Search Videos
-        document.getElementById('search-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const query = document.getElementById('query').value;
-            const response = await fetch(`/search/?query=${encodeURIComponent(query)}`);
-            const data = await response.json();
-            displayResult('search-results', data);
-        });
-
-        // Get Video Details
-        document.getElementById('video-details-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const videoId = document.getElementById('video-id').value;
-            const response = await fetch(`/video/${videoId}/`);
-            const data = await response.json();
-            displayResult('video-details', data);
-        });
-
-        // Embed Video
-        document.getElementById('embed-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const videoId = document.getElementById('embed-video-id').value;
-            const response = await fetch(`/embed/${videoId}/`);
-            const data = await response.json();
-            document.getElementById('embed-result').innerHTML = data.embed_code || '<p>Error embedding video.</p>';
-        });
-
-
-
-        // Get Channel Details
-        document.getElementById('channel-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const channelId = document.getElementById('channel-id').value;
-            const response = await fetch(`/channel/${channelId}/`);
-            const data = await response.json();
-            displayResult('channel-details', data);
-        });
-
-
-
-
-
-
-
-        // Upload Video with URL
-        document.getElementById('upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const videoPath = document.getElementById('video-url').value; // Expecting a local path
-            try {
-                const response = await fetch('/upload/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ video_path: videoPath }) // Changed key to `video_path`
-                });
-                const data = await response.json();
-                displayResult('upload-status', data);
-            } catch (error) {
-                console.error("Upload failed:", error);
-                displayResult('upload-status', { error: "Failed to upload video." });
-            }
-        });
-        
-
-
-
-
-        // Edit Video Details
-        document.getElementById('edit-video-details-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const videoId = document.getElementById('edit-video-id').value;
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const response = await fetch('/edit-video-details/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    video_id: videoId,
-                    title: title,
-                    description: description,
-                })
-            });
-            const data = await response.json();
-            displayResult('edit-video-details-status', data);
-        });
-    </script>
+    <script src="static/script.js"></script>
 </body>
 </html>
